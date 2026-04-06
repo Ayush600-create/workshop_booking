@@ -12,16 +12,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import sys
-# from local_settings import (
-#     EMAIL_HOST,
-#     EMAIL_PORT,
-#     EMAIL_HOST_USER,
-#     EMAIL_HOST_PASSWORD,
-#     EMAIL_USE_TLS,
-#     SENDER_EMAIL
-# )
-
-from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'smvfixi&v4mrulp2wvxp)kwjf^yqv-3h+f+nu5m)&=o=7(nlk1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 
@@ -80,21 +70,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'workshop_portal.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.{0}'.format(
-            config('DB_ENGINE', default='sqlite3')
-        ),
-        'NAME': config('DB_NAME', default=os.path.join(BASE_DIR, 'db.sqlite3')),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='')
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -143,16 +118,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "workshop_app", "data")
 LOG_FOLDER = os.path.join(BASE_DIR, "workshop_app", "logs")
 
 # Email Connection Settings
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-EMAIL_PORT = config('EMAIL_PORT', default=587)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_TIMEOUT = 300
-SENDER_EMAIL = config('SENDER_EMAIL', default='')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', '')
 
 # Use SMTP backend for production, console backend for development
-EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 
 # Change this to the production url
 PRODUCTION_URL = 'http://localhost:8000'
